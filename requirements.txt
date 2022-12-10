@@ -11,5 +11,4 @@ pytz
 requests
 sqlparse
 tzdata
-urllib
 
