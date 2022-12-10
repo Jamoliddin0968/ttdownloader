@@ -1,5 +1,6 @@
-﻿asgiref
-bs
+﻿gunicorn
+asgiref
+bs4
 certifi
 charset-normalizer
 Django
@@ -12,4 +13,4 @@ soupsievepost
 sqlparse
 tzdata
 urllib
-gunicorn
+
