@@ -54,6 +54,8 @@ class TTDonwloadView(APIView):
                 raise Http404
             downloadsoup = BeautifulSoup(response.text,"lxml")
             downlink = downloadsoup.a["href"]
+            if 'ssstik.io' not in downlink:
+                raise Http404
             return Response({"link":downlink})
         except :
             raise Http404
