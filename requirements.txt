@@ -11,4 +11,5 @@ pytz
 requests
 sqlparse
 tzdata
+instagrapi
 
