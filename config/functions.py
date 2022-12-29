@@ -3,13 +3,22 @@ from rest_framework.response import Response
 from bs4 import BeautifulSoup as bs
 from rest_framework.views import APIView
 from django.http import Http404
+from instagrapi import Client
 import instaloader
 L = instaloader.Instaloader(download_pictures = False, download_videos = False, download_comments= False, compress_json = False)
             
 class InstaLoaderDownloadView(APIView):
     def get(self,request):
+        link = request.GET.get('link')
         try:
-            link = request.GET.get('link')
+            gram = Client()
+            fetch_id = gram.media_pk_from_url(link)
+            info = gram.media_info_a1(fetch_id).dict()
+            print("yes")
+            return Response({"link":info['video_url']})  
+        except :
+            pass
+        try:
             L.login("myinstauserdown0968", "a905360968")
             print("salom")
             links = link.split("/")
