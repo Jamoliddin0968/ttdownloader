@@ -1,8 +1,51 @@
 import requests
 from rest_framework.response import Response
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup as bs
 from rest_framework.views import APIView
 from django.http import Http404
+import instaloader
+L = instaloader.Instaloader(download_pictures = False, download_videos = False, download_comments= False, compress_json = False)
+            
+class InstaLoaderDownloadView(APIView):
+    def get(self,request):
+        try:
+            link = request.GET.get('link')
+            L.login("myinstauserdown0968", "a905360968")
+            print("salom")
+            links = link.split("/")
+            # print(links)
+            shortcode = ""  
+            if len(links) > 4:
+                shortcode = links[4]
+            post = instaloader.Post.from_shortcode(L.context,shortcode)
+            if post.is_video:
+                video_url = post.video_url
+                return Response({"link":video_url})
+            raise Http404
+        except:
+            raise Http404
+        
+
+class IGDownloadView(APIView):
+  def get(self, request):
+    try:
+        link = request.GET.get('link')
+        baselink = "https://downloadgram.org"
+        data = {
+        "url": link
+        }
+        head = {
+        "user-agent": "Chrome"
+        }
+        ses = requests.Session()
+        req = ses.post(baselink, headers=head, data=data)
+        soup = [i["href"] for i in bs(req.text, "html.parser").find_all(
+            'a', {'href': True, 'rel': 'noopener noreferrer'})]
+        if len(soup) > 0:
+            return Response({"link": soup[0]})
+        raise Http404
+    except:
+        raise Http404
 
 class TTDonwloadView(APIView):
     def get(self,request):
@@ -52,7 +95,7 @@ class TTDonwloadView(APIView):
             response = requests.post('https://ssstik.io/abc', params=params, cookies=cookies, headers=headers, data=data)
             if(response.status_code != 200):
                 raise Http404
-            downloadsoup = BeautifulSoup(response.text,"lxml")
+            downloadsoup = bs(response.text,"lxml")
             downlink = downloadsoup.a["href"]
             print(downlink)
             if 'ssstik' not in downlink:
