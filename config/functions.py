@@ -14,13 +14,13 @@ class InstaLoaderDownloadView(APIView):
             gram = Client()
             fetch_id = gram.media_pk_from_url(link)
             info = gram.media_info_a1(fetch_id).dict()
-            print("yes")
+            # print("yes")
             return Response({"link":info['video_url']})  
         except :
             pass
         try:
             L.login("myinstauserdown0968", "a905360968")
-            print("salom")
+            # print("salom")
             links = link.split("/")
             # print(links)
             shortcode = ""  
