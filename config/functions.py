@@ -3,61 +3,32 @@ from rest_framework.response import Response
 from bs4 import BeautifulSoup as bs
 from rest_framework.views import APIView
 from django.http import Http404
-from instagrapi import Client
-import instaloader
-L = instaloader.Instaloader(download_pictures = False, download_videos = False, download_comments= False, compress_json = False)
-            
-class InstaLoaderDownloadView(APIView):
-    def get(self,request):
-        link = request.GET.get('link')
+
+
+class IGDownloadView(APIView):
+    def get(self, request):
         try:
-            gram = Client()
-            fetch_id = gram.media_pk_from_url(link)
-            info = gram.media_info_a1(fetch_id).dict()
-            # print("yes")
-            return Response({"link":info['video_url']})  
-        except :
-            pass
-        try:
-            L.login("myinstauserdown0968", "a905360968")
-            # print("salom")
-            links = link.split("/")
-            # print(links)
-            shortcode = ""  
-            if len(links) > 4:
-                shortcode = links[4]
-            post = instaloader.Post.from_shortcode(L.context,shortcode)
-            if post.is_video:
-                video_url = post.video_url
-                return Response({"link":video_url})
+            link = request.GET.get('link')
+            baselink = "https://downloadgram.org"
+            data = {
+                "url": link
+            }
+            head = {
+                "user-agent": "Chrome"
+            }
+            ses = requests.Session()
+            req = ses.post(baselink, headers=head, data=data)
+            soup = [i["href"] for i in bs(req.text, "html.parser").find_all(
+                'a', {'href': True, 'rel': 'noopener noreferrer'})]
+            if len(soup) > 0:
+                return Response({"link": soup[0]})
             raise Http404
         except:
             raise Http404
-        
 
-class IGDownloadView(APIView):
-  def get(self, request):
-    try:
-        link = request.GET.get('link')
-        baselink = "https://downloadgram.org"
-        data = {
-        "url": link
-        }
-        head = {
-        "user-agent": "Chrome"
-        }
-        ses = requests.Session()
-        req = ses.post(baselink, headers=head, data=data)
-        soup = [i["href"] for i in bs(req.text, "html.parser").find_all(
-            'a', {'href': True, 'rel': 'noopener noreferrer'})]
-        if len(soup) > 0:
-            return Response({"link": soup[0]})
-        raise Http404
-    except:
-        raise Http404
 
 class TTDonwloadView(APIView):
-    def get(self,request):
+    def get(self, request):
         try:
             link = request.GET.get('link')
             cookies = {
@@ -101,14 +72,53 @@ class TTDonwloadView(APIView):
                 'tt': 'SHlFVjQ3',
             }
 
-            response = requests.post('https://ssstik.io/abc', params=params, cookies=cookies, headers=headers, data=data)
-            if(response.status_code != 200):
+            response = requests.post(
+                'https://ssstik.io/abc', params=params, cookies=cookies, headers=headers, data=data)
+            if (response.status_code != 200):
                 raise Http404
-            downloadsoup = bs(response.text,"lxml")
+            downloadsoup = bs(response.text, "lxml")
             downlink = downloadsoup.a["href"]
             print(downlink)
             if 'ssstik' not in downlink:
                 raise Http404
-            return Response({"link":downlink})
-        except :
+            return Response({"link": downlink})
+        except:
+            raise Http404
+
+
+class IGRamDownloadView(APIView):
+    def get(self, request):
+        try:
+            link = request.GET.get('link')
+            cookies = {
+                '_ga': 'GA1.2.925462583.1683094810',
+                '_gid': 'GA1.2.2113720974.1683094810',
+                '_gat_gtag_UA_253023977_1': '1',
+                '__gads': 'ID=4001b2a1b123992c-22618555badd00a6:T=1683094810:RT=1683094810:S=ALNI_MYr465x7Sjx-6aE1gVYhequeMVIbA',
+                '__gpi': 'UID=00000bf4fd873acf:T=1683094810:RT=1683094810:S=ALNI_MbqxlSaQ3r9_WY6Z_wnOO2snhuCTA',
+                '_ga_VGQL34VEH8': 'GS1.1.1683094809.1.0.1683094811.0.0.0',
+                'PHPSESSID': 'br49250ppssnfc5318k7lqe8g0',
+            }
+
+            headers = {
+ 
+                'accept-language': 'en-US,en;q=0.9,ru;q=0.8',
+                'content-type': 'application/x-www-form-urlencoded',
+
+                'sec-ch-ua': '"Chromium";v="112", "Microsoft Edge";v="112", "Not:A-Brand";v="99"',
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.64',
+            }
+
+            data = {
+                'url': link,
+                'token': '',
+            }
+
+            response = requests.post(
+                'https://igram.live/wp-json/igram/video-data/', cookies=cookies, headers=headers, data=data)
+
+            return Response({
+                'data':response.json()
+            })
+        except:
             raise Http404

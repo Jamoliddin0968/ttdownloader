@@ -15,10 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .functions import TTDonwloadView , IGDownloadView , InstaLoaderDownloadView
+from .functions import TTDonwloadView , IGDownloadView , IGRamDownloadView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('tiktok/',TTDonwloadView.as_view(),name = "tiktok"),
-    path('instagram/',InstaLoaderDownloadView.as_view(),name = "instagram"),
-    
+    path('instagram/',IGRamDownloadView.as_view(),name = "instagram"),  
 ]
