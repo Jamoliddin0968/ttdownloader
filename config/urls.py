@@ -2,10 +2,9 @@
 """
 from django.contrib import admin
 from django.urls import path,include
-from .functions import TTDonwloadView
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('tiktok/',TTDonwloadView.as_view(),name = "tiktok"),
+    path('tiktok/',include('tiktok.urls')),
     path('instagram/',include('instagram.urls')),  
 ]
 from django.conf import settings
