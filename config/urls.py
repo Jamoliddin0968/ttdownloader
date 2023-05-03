@@ -21,3 +21,6 @@ urlpatterns = [
     path('tiktok/',TTDonwloadView.as_view(),name = "tiktok"),
     path('instagram/',IGRamDownloadView.as_view(),name = "instagram"),  
 ]
+from django.conf import settings
+from django.conf.urls.static import static
+urlpatterns += static(settings.STATIC_URL,document_root = settings.STATIC_ROOT)
